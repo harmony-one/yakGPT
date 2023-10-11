@@ -143,12 +143,14 @@ export const submitAudio = async (newMessage: Message, blob: Blob) => {
     if (!autoDetectLanguage && spokenLanguageCode) {
       formData.append("language", spokenLanguageCode);
     }
+    const startTime = Date.now();
     const response = await axios.post(apiUrl, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${apiKey}`,
       },
     });
+    console.log('### sttTime', Date.now() - startTime);
 
     if (response.data.error) {
       console.error("Error sending audio data:", response.data.error);

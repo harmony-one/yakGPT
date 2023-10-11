@@ -31,7 +31,6 @@ export const submitMessage = async (message: Message) => {
     console.error("Chat not found");
     return;
   }
-  console.log("chat", chat.id);
 
   // If this is an existing message, remove all the messages after it
   const index = chat.messages.findIndex((m) => m.id === message.id);

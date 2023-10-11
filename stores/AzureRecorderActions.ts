@@ -18,8 +18,13 @@ export const startRecording = async (router: NextRouter) => {
   const { apiKeyAzure, apiKeyAzureRegion } = get();
 
   let textUpdates: string[] = [];
+  let startTime = 0;
+  let endTime = 0;
 
   const persistText = (text: string) => {
+    console.log('### sttTime', Date.now() - startTime);
+    startTime = 0;
+    endTime = 0;
     const effectiveInputValue = `${get().textInputValue} `;
     set((state) => ({
       textInputValue: effectiveInputValue,
@@ -86,14 +91,17 @@ export const startRecording = async (router: NextRouter) => {
   set((state) => ({ recognizer }));
 
   recognizer.recognizing = (s, e) => {
-    console.log(`RECOGNIZING: Text=${e.result.text}`);
+    if (textUpdates.length === 0) {
+      startTime = Date.now()
+    }
+    // console.log(`RECOGNIZING: Text=${e.result.text}`);
     updateAndEventuallyPersistText(e.result.text, false);
   };
 
   recognizer.recognized = (s, e) => {
     let resultText = e.result.text.trim();
     if (e.result.reason == speechsdk.ResultReason.RecognizedSpeech && resultText) {
-      console.log(`RECOGNIZED: Text=${resultText}`);
+      // console.log(`RECOGNIZED: Text=${resultText}`);
       updateAndEventuallyPersistText(resultText, true);
     } else if (e.result.reason == speechsdk.ResultReason.NoMatch) {
       console.log("NOMATCH: Speech could not be recognized.");

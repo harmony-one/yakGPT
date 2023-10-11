@@ -108,7 +108,10 @@ export const initPlayback = () => {
 
     if (firstIdleChunk !== -1 && playerApiState === "idle") {
       // We need to get more audio
+      let startTime = Date.now()
       await fetchAudio(firstIdleChunk);
+      let sttTime = Date.now() - startTime
+      console.log('### ttsTime', firstIdleChunk, sttTime, 'ms');
     }
   };
   const interval = setInterval(checker, 1000);
@@ -172,6 +175,7 @@ const fetchAudio = async (idx: number) => {
   set({ playerApiState: "loading" });
 
   try {
+    console.log('### chunk.text', chunk.text);
     const audioURL = await genAudio({
       text: chunk.text,
       key: apiKey,
